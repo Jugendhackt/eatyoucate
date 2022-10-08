@@ -22,6 +22,7 @@ pub struct Product {
     unit: String,
     price: f32,
     amount: f32,
+    #[serde(skip_serializing_if = "Option::is_none")]
     origin: Option<String>,
 }
 
