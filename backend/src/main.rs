@@ -23,23 +23,24 @@ pub struct Product {
 }
 
 #[get("/products?<search>&<category>&<certificate>")]
-fn list_products(
+async fn list_products(
+    mut db_con: Connection<Db>,
     search: Option<&str>,
     category: Option<&str>,
     certificate: Option<&str>,
 ) -> Json<ProductList> {
-    let mut out: Vec<Product> = vec![];
-
+    let mut out: Vec<String> = vec![];
+    let categories = db::get_categories(&mut db_con).await;
     if search.is_none() && category.is_none() && certificate.is_none() {
-        out = dummy_products().to_vec();
+        out = categories;
     } else {
         let mut valid: bool;
-        for product in dummy_products() {
+        for product in categories {
             valid = true;
 
             match search {
                 Some(s) => {
-                    if !product.name.contains(s) {
+                    if !product.contains(s) {
                         valid = false;
                     }
                 }
