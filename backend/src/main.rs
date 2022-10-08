@@ -1,16 +1,17 @@
+pub mod db;
+
 use rocket::serde::{json::Json, Serialize};
 use rocket::{get, routes};
-use rocket_db_pools::Database;
-const PRODUCTS: [&str; 3] = ["banana", "apple", "rice"];
+use rocket_db_pools::{Connection, Database};
 
-#[derive(Database)]
-#[database("data")]
-pub struct Db(sqlx::SqlitePool);
+use crate::db::Db;
+
+const PRODUCTS: [&str; 3] = ["banana", "apple", "rice"];
 
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
 pub struct ProductList {
-    products: Vec<&'static str>,
+    products: Vec<String>,
 }
 
 pub struct Product {
@@ -20,18 +21,19 @@ pub struct Product {
 }
 
 #[get("/products?<search>")]
-fn list_products(search: Option<&str>) -> Json<ProductList> {
-    let mut out: Vec<&str> = vec![];
+async fn list_products(mut db_con: Connection<Db>, search: Option<&str>) -> Json<ProductList> {
+    let mut out: Vec<String> = vec![];
+    let products = db::get_categories(&mut db_con).await;
     match search {
         Some(t) => {
-            for product in PRODUCTS {
+            for product in products {
                 if product.contains(t) {
                     out.push(product)
                 }
             }
         }
         None => {
-            out = PRODUCTS.to_vec();
+            out = products;
         }
     }
     Json(ProductList { products: out })
@@ -46,7 +48,7 @@ fn hello() -> &'static str {
 async fn main() {
     rocket::build()
         .mount("/", routes![hello, list_products])
-        .attach(Db::init())
+        .attach(db::Db::init())
         .launch()
         .await
         .unwrap();

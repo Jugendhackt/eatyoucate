@@ -1,2 +1,2 @@
 [default.databases.data]
-url = "../Datebbank/datenbank.db"
+url = "sqlite://../Datenbank/datenbank.db"

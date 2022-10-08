@@ -1,9 +1,16 @@
+use rocket_db_pools::Database;
 use sqlx::prelude::*;
 
-const DB_FILE: &str = "../../Datenbank/datenbank.db";
+#[derive(Database)]
+#[database("data")]
+pub struct Db(sqlx::SqlitePool);
 
-pub fn init_db() {
-    Connection::connect(DB_FILE).await?
+pub async fn get_categories(db: &mut sqlx::pool::PoolConnection<sqlx::Sqlite>) -> Vec<String> {
+    sqlx::query!("SELECT ID, Name FROM Produktkategorien")
+        .fetch_all(db)
+        .await
+        .unwrap()
+        .into_iter()
+        .map(|x| x.Name)
+        .collect()
 }
-
-pub fn get_categories() -> Vec<&str> {}
