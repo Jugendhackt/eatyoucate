@@ -15,23 +15,26 @@
 
     <script src="main.js"> </script>
     <meta charset="UTF-8">
-    <title>eatyoucate </title>
+    <title>eatyoucate</title>
 </head>
 <body>
 
-<nav class="navbar navbar-light bg-light">
-    <a class="navbar-brand" href="#"></a>
-    <div class="border">
-        <div class="border">Logo</div>
-        <div class="border">Startseite</div>
-        <div class="border">Tab 1</div>
-        <div class="border">Tab 2</div>
-    </div>
+<nav class="navbar navbar-light bg-light border">
+
+    <div class="container-fluid border">
+        <h1>🐧</h1>
+        <div class="d-flex align-items-start border">
+            <div class="container-fluid p-1 w-auto border" style="padding-left: 0px; padding-right: 0px">Startseite</div>
+            <div class="container-fluid p-1 w-auto border text-nowrap"> Text 1</div>
+            <div class="container-fluid p-1 w-auto text-nowrap border" text-nowrap>Tab 2</div>
+        </div>
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    </div>
+    <div class="container">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
                 <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
@@ -59,13 +62,20 @@
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
     </div>
+    </div>
 </nav>
 
-<div class="header">
-    <h1>Main menu</h1>
-    <p>←↓→←↓→←↓→←↓→←↓→←↓→</p>
-</div>
 
+
+<div class="container" style="padding: 10px">
+    <div class="input-group">
+        <input type="search" id="search-input" class="form-control" />
+        <button id="search-button" type="button" class="btn btn-primary">
+            Search
+        </button>
+    </div>
+</div>
+<!--
 <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Dropdown button
@@ -76,11 +86,12 @@
         <a class="dropdown-item" href="#">Something else here</a>
     </div>
 </div>
-
-<div id="js-container" class="p-5">
+-->
+<div id="js-container" class="flex-fill" style="padding-left: 30px; padding-right: 30px" >
     <ul class="list-group">
     </ul>
 </div>
+
 
 
 
