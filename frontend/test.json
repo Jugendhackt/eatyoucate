@@ -1,0 +1,38 @@
+{
+  "products": [
+    {
+      "category_name": "Obst",
+      "name": "Banane",
+      "unit": "g",
+      "price": 1.5,
+      "amount": 250.0,
+      "origin": "konventionell"
+    },
+    {
+      "category_name": "Obst",
+      "name": "Banane",
+      "certificate": "Bioland",
+      "unit": "g",
+      "price": 2.0,
+      "amount": 250.0,
+      "origin": "Bio"
+    },
+    {
+      "category_name": "Obst",
+      "name": "Banane",
+      "certificate": "Fairtrade",
+      "unit": "g",
+      "price": 2.5,
+      "amount": 250.0,
+      "origin": "Bio"
+    },
+    {
+      "category_name": "Obst",
+      "name": "Apfel",
+      "unit": "Stk",
+      "price": 1.0,
+      "amount": 1.0,
+      "origin": "konventionell"
+    }
+  ]
+}

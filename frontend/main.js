@@ -42,15 +42,31 @@ function test() {
   }
 }
 
+function gridBuilder(productsList) {
+  const ul = document.querySelector('#mainGrid > ul');
+  for (let i  = 0; i < productsList.length; i++) {
+    const li = document.createElement("li");
+    li.setAttribute("class", "list-group-item");
+    li.innerHTML = productsList[i].name;
+    ul.appendChild(li);
+  };
+}
+
+function processResponse(response) {
+  console.log(response);
+  console.log(response.products[0]);
+  gridBuilder(response.products);
+}
+
 function requestSearch(searchTerm) {
   console.log(searchTerm);
-  let response = fetch('http://127.0.0.1:8000/products?%a%')
+  fetch('http://127.0.0.1:8000/products?%a%')//"./test.json")
     .then((response) => response.json())
-    .then((data) => console.log(data));
+    .then((data) => processResponse(data));
 }
 
 function init() {
-  test();
+  //test();
   const searchButton = document.getElementById('search-button');
   const searchInput = document.getElementById('search-input');
   searchButton.addEventListener('click', () => {
