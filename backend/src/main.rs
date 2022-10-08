@@ -8,6 +8,12 @@ pub struct ProductList {
     products: Vec<&'static str>,
 }
 
+pub struct Product {
+    name: &'static str,
+    categories: Vec<&'static str>,
+    certificate: Vec<&'static str>,
+}
+
 #[get("/products?<search>")]
 fn list_products(search: Option<&str>) -> Json<ProductList> {
     let mut out: Vec<&str> = vec![];
