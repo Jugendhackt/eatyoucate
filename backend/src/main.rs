@@ -1,34 +1,84 @@
 use rocket::serde::{json::Json, Serialize};
 use rocket::{get, launch, routes};
-const PRODUCTS: [&str; 3] = ["banana", "apple", "rice"];
-
+fn dummy_products() -> [Product; 3] {
+    [
+        Product {
+            name: "banna",
+            categories: vec!["fruit"],
+            certificates: vec!["fair"],
+        },
+        Product {
+            name: "apple",
+            categories: vec!["fruit"],
+            certificates: vec!["fair"],
+        },
+        Product {
+            name: "rice",
+            categories: vec![],
+            certificates: vec![],
+        },
+    ]
+}
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
 pub struct ProductList {
-    products: Vec<&'static str>,
+    products: Vec<Product>,
 }
 
+#[derive(Serialize, Clone)]
+#[serde(crate = "rocket::serde")]
 pub struct Product {
     name: &'static str,
     categories: Vec<&'static str>,
-    certificate: Vec<&'static str>,
+    certificates: Vec<&'static str>,
 }
 
-#[get("/products?<search>")]
-fn list_products(search: Option<&str>) -> Json<ProductList> {
-    let mut out: Vec<&str> = vec![];
-    match search {
-        Some(t) => {
-            for product in PRODUCTS {
-                if product.contains(t) {
-                    out.push(product)
+#[get("/products?<search>&<category>&<certificate>")]
+fn list_products(
+    search: Option<&str>,
+    category: Option<&str>,
+    certificate: Option<&str>,
+) -> Json<ProductList> {
+    let mut out: Vec<Product> = vec![];
+
+    if search.is_none() && category.is_none() && certificate.is_none() {
+        out = dummy_products().to_vec();
+    } else {
+        let mut valid: bool;
+        for product in dummy_products() {
+            valid = true;
+
+            match search {
+                Some(s) => {
+                    if !product.name.contains(s) {
+                        valid = false;
+                    }
                 }
+                _ => {}
+            }
+            match category {
+                Some(c) => {
+                    if !product.categories.contains(&c) {
+                        valid = false;
+                    }
+                }
+                _ => {}
+            }
+            match certificate {
+                Some(c) => {
+                    if !product.certificates.contains(&c) {
+                        valid = false;
+                    }
+                }
+                _ => {}
+            }
+
+            if valid {
+                out.push(product)
             }
         }
-        None => {
-            out = PRODUCTS.to_vec();
-        }
     }
+
     Json(ProductList { products: out })
 }
 
