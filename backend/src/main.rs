@@ -1,28 +1,17 @@
+pub mod db;
+
 use rocket::serde::{json::Json, Serialize};
-use rocket::{get, launch, routes};
-fn dummy_products() -> [Product; 3] {
-    [
-        Product {
-            name: "banna",
-            categories: vec!["fruit"],
-            certificates: vec!["fair"],
-        },
-        Product {
-            name: "apple",
-            categories: vec!["fruit"],
-            certificates: vec!["fair"],
-        },
-        Product {
-            name: "rice",
-            categories: vec![],
-            certificates: vec![],
-        },
-    ]
-}
+use rocket::{get, routes};
+use rocket_db_pools::{Connection, Database};
+
+use crate::db::Db;
+
+const PRODUCTS: [&str; 3] = ["banana", "apple", "rice"];
+
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
 pub struct ProductList {
-    products: Vec<Product>,
+    products: Vec<String>,
 }
 
 #[derive(Serialize, Clone)]
@@ -87,7 +76,12 @@ fn hello() -> &'static str {
     "Hello, world!"
 }
 
-#[launch]
-fn rocket() -> _ {
-    rocket::build().mount("/", routes![hello, list_products])
+#[rocket::main]
+async fn main() {
+    rocket::build()
+        .mount("/", routes![hello, list_products])
+        .attach(db::Db::init())
+        .launch()
+        .await
+        .unwrap();
 }
