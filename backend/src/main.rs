@@ -52,9 +52,14 @@ fn hello() -> &'static str {
 
 #[rocket::main]
 async fn main() {
-    rocket::build()
+    let _ = rocket::build()
         .mount("/", routes![hello, list_products])
         .attach(db::Db::init())
+        .attach(rocket::fairing::AdHoc::on_response("CORS", |_, res| {
+            Box::pin(async move {
+                res.set_raw_header("Access-Control-Allow-Origin", "*");
+            })
+        }))
         .launch()
         .await
         .unwrap();
