@@ -1,6 +1,11 @@
 use rocket::serde::{json::Json, Serialize};
-use rocket::{get, launch, routes};
+use rocket::{get, routes};
+use rocket_db_pools::Database;
 const PRODUCTS: [&str; 3] = ["banana", "apple", "rice"];
+
+#[derive(Database)]
+#[database("data")]
+pub struct Db(sqlx::SqlitePool);
 
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
@@ -37,10 +42,12 @@ fn hello() -> &'static str {
     "Hello, world!"
 }
 
-#[launch]
-fn rocket() -> _ {
-    rocket::build().mount("/", routes![hello, list_products])
-}
-
 #[rocket::main]
-async fn main() {}
+async fn main() {
+    rocket::build()
+        .mount("/", routes![hello, list_products])
+        .attach(Db::init())
+        .launch()
+        .await
+        .unwrap();
+}

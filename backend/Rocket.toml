@@ -1,0 +1,2 @@
+[default.databases.data]
+url = "../Datebbank/datenbank.db"
