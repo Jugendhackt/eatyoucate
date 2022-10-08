@@ -9,9 +9,9 @@ pub struct ProductList {
 }
 
 #[get("/products?<search>")]
-fn list_products(term: Option<&str>) -> Json<ProductList> {
+fn list_products(search: Option<&str>) -> Json<ProductList> {
     let mut out: Vec<&str> = vec![];
-    match term {
+    match search {
         Some(t) => {
             for product in PRODUCTS {
                 if product.contains(t) {
