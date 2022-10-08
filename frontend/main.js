@@ -44,8 +44,9 @@ function test() {
 
 function requestSearch(searchTerm) {
   console.log(searchTerm);
-  let response = fetch('http://127.0.0.1:8000/products?%a%').await;
-  console.log(response);
+  let response = fetch('http://127.0.0.1:8000/products?%a%')
+    .then((response) => response.json())
+    .then((data) => console.log(data));
 }
 
 function init() {
