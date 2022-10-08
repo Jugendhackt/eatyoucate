@@ -11,15 +11,19 @@ const PRODUCTS: [&str; 3] = ["banana", "apple", "rice"];
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
 pub struct ProductList {
-    products: Vec<String>,
+    products: Vec<Product>,
 }
 
 #[derive(Serialize, Clone)]
 #[serde(crate = "rocket::serde")]
 pub struct Product {
-    name: &'static str,
-    categories: Vec<&'static str>,
-    certificates: Vec<&'static str>,
+    category_name: String,
+    name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    certificate: Option<String>,
+    price: f32,
+    amount: u16,
+    origin: String,
 }
 
 #[get("/products?<search>&<category>&<certificate>")]
