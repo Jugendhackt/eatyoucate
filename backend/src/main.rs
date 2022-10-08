@@ -5,10 +5,10 @@ const PRODUCTS: [&str; 3] = ["banana", "apple", "rice"];
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
 pub struct ProductList {
-    data: Vec<&'static str>,
+    products: Vec<&'static str>,
 }
 
-#[get("/products?<term>")]
+#[get("/products?<search>")]
 fn list_products(term: Option<&str>) -> Json<ProductList> {
     let mut out: Vec<&str> = vec![];
     match term {
@@ -23,7 +23,7 @@ fn list_products(term: Option<&str>) -> Json<ProductList> {
             out = PRODUCTS.to_vec();
         }
     }
-    Json(ProductList { data: out })
+    Json(ProductList { products: out })
 }
 
 #[get("/")]
