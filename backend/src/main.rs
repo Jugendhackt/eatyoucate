@@ -6,79 +6,48 @@ use rocket_db_pools::{Connection, Database};
 
 use crate::db::Db;
 
-const PRODUCTS: [&str; 3] = ["banana", "apple", "rice"];
-
-#[derive(Serialize)]
+#[derive(Serialize, Debug, Clone)]
 #[serde(crate = "rocket::serde")]
 pub struct ProductList {
     products: Vec<Product>,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 #[serde(crate = "rocket::serde")]
 pub struct Product {
     category_name: String,
     name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     certificate: Option<String>,
+    unit: String,
     price: f32,
-    amount: u16,
-    origin: String,
+    amount: f32,
+    origin: Option<String>,
 }
 
-#[get("/products?<search>&<category>&<certificate>")]
+#[get("/products?<search>&<category>&<certificate>&<origin>")]
 async fn list_products(
     mut db_con: Connection<Db>,
     search: Option<&str>,
     category: Option<&str>,
     certificate: Option<&str>,
+    origin: Option<&str>,
 ) -> Json<ProductList> {
-    let mut out: Vec<String> = vec![];
-    let categories = db::get_categories(&mut db_con).await;
-    if search.is_none() && category.is_none() && certificate.is_none() {
-        out = categories;
-    } else {
-        let mut valid: bool;
-        for product in categories {
-            valid = true;
-
-            match search {
-                Some(s) => {
-                    if !product.contains(s) {
-                        valid = false;
-                    }
-                }
-                _ => {}
-            }
-            match category {
-                Some(c) => {
-                    if !product.categories.contains(&c) {
-                        valid = false;
-                    }
-                }
-                _ => {}
-            }
-            match certificate {
-                Some(c) => {
-                    if !product.certificates.contains(&c) {
-                        valid = false;
-                    }
-                }
-                _ => {}
-            }
-
-            if valid {
-                out.push(product)
-            }
-        }
-    }
-
-    Json(ProductList { products: out })
+    Json(ProductList {
+        products: db::get_products_from_category(
+            &mut db_con,
+            search,
+            category,
+            certificate,
+            origin,
+        )
+        .await,
+    })
 }
 
 #[get("/")]
 fn hello() -> &'static str {
-    "Hello, world!"
+    "Welcome to Eatyoucate"
 }
 
 #[rocket::main]

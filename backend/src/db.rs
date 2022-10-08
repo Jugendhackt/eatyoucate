@@ -15,8 +15,11 @@ macro_rules! fetch_all {
 
 pub async fn get_products_from_category(
     db: &mut sqlx::pool::PoolConnection<sqlx::Sqlite>,
+    search: Option<&str>,
     category: Option<&str>,
-) -> Vec<String> {
+    certificate: Option<&str>,
+    origin: Option<&str>,
+) -> Vec<Product> {
     fetch_all!(
         query!(
             "select KAT_NAME,
@@ -34,18 +37,21 @@ and PRD_NAME like ifnull(?, PRD_NAME)
 and PPR_HERKUNFT = ifnull(?, PPR_HERKUNFT)
 and (PPR_ZERTIFIKAT = ifnull(?, PPR_ZERTIFIKAT) or PPR_ZERTIFIKAT is NULL)",
             category,
-            category,
-            category,
-            category
+            search,
+            origin,
+            certificate
         ),
         db
     )
+    .into_iter()
     .map(|x| Product {
-        amount: todo!(),
-        category_name: todo!(),
-        origin: todo!(),
-        price: todo!(),
-        certificate: todo!(),
-        name: todo!(),
+        amount: x.PPR_MENGE,
+        category_name: x.KAT_NAME,
+        origin: x.PPR_HERKUNFT,
+        price: x.PPR_PREIS,
+        certificate: x.PPR_ZERTIFIKAT,
+        name: x.PRD_NAME,
+        unit: x.PPR_EINHEIT,
     })
+    .collect()
 }
