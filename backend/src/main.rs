@@ -10,6 +10,13 @@ use crate::db::Db;
 #[serde(crate = "rocket::serde")]
 pub struct ProductList {
     products: Vec<Product>,
+    count: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    global_min_price: Option<f32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    global_max_price: Option<f32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    global_avg_price: Option<f32>,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -24,25 +31,57 @@ pub struct Product {
     amount: f32,
     #[serde(skip_serializing_if = "Option::is_none")]
     origin: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    min_price: Option<f32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    max_price: Option<f32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    avg_price: Option<f32>,
 }
 
-#[get("/products?<search>&<category>&<certificate>&<origin>")]
+#[get("/products?<search>&<category>&<certificate>&<origin>&<sort_by>")]
 async fn list_products(
     mut db_con: Connection<Db>,
     search: Option<&str>,
     category: Option<&str>,
     certificate: Option<&str>,
     origin: Option<&str>,
+    sort_by: Option<&str>,
 ) -> Json<ProductList> {
+    let products =
+        db::get_products_from_category(&mut db_con, search, category, certificate, origin, sort_by)
+            .await;
+    let global_min_price: Option<f32> = {
+        let mut out = None;
+        products.iter().for_each(|p| {
+            (p.price < out.unwrap_or(f32::MAX)).then(|| out = Some(p.price));
+        });
+        out
+    };
+    let global_max_price: Option<f32> = {
+        let mut out = None;
+        products.iter().for_each(|p| {
+            (p.price > out.unwrap_or(f32::MIN)).then(|| out = Some(p.price));
+        });
+        out
+    };
+    let global_avg_price: Option<f32> = {
+        if !products.is_empty() {
+            let mut sum: f64 = 0.0;
+            products.iter().for_each(|p| {
+                sum += p.price as f64;
+            });
+            Some((sum / products.len() as f64) as f32)
+        } else {
+            None
+        }
+    };
     Json(ProductList {
-        products: db::get_products_from_category(
-            &mut db_con,
-            search,
-            category,
-            certificate,
-            origin,
-        )
-        .await,
+        count: products.len() as u32,
+        products,
+        global_min_price,
+        global_avg_price,
+        global_max_price,
     })
 }
 

@@ -19,6 +19,7 @@ pub async fn get_products_from_category(
     category: Option<&str>,
     certificate: Option<&str>,
     origin: Option<&str>,
+    sort_by: Option<&str>,
 ) -> Vec<Product> {
     fetch_all!(
         query!(
@@ -28,18 +29,23 @@ PPR_PREIS,
 PPR_MENGE,
 PPR_EINHEIT,
 PPR_HERKUNFT,
-PPR_ZERTIFIKAT
+PPR_ZERTIFIKAT,
+MIN(PPR_PREIS) MIN_PREIS,
+MAX(PPR_PREIS) MAX_PREIS,
+AVG(PPR_PREIS) AVG_PREIS
 from Kategorien, Produkte, Produktpreise
 where KAT_NAME = ifnull(?, KAT_NAME)
 and PRD_KAT_ID = KAT_ID
 and PPR_PRD_ID = PRD_ID
 and PRD_NAME like ifnull(?, PRD_NAME)
 and PPR_HERKUNFT = ifnull(?, PPR_HERKUNFT)
-and (PPR_ZERTIFIKAT = ifnull(?, PPR_ZERTIFIKAT) or PPR_ZERTIFIKAT is NULL)",
+and (PPR_ZERTIFIKAT = ifnull(?, PPR_ZERTIFIKAT) or PPR_ZERTIFIKAT is NULL)
+GROUP BY ifnull(?,PRD_NAME)",
             category,
             search,
             origin,
-            certificate
+            certificate,
+            sort_by
         ),
         db
     )
@@ -52,6 +58,9 @@ and (PPR_ZERTIFIKAT = ifnull(?, PPR_ZERTIFIKAT) or PPR_ZERTIFIKAT is NULL)",
         certificate: x.PPR_ZERTIFIKAT,
         name: x.PRD_NAME,
         unit: x.PPR_EINHEIT,
+        min_price: x.MIN_PREIS,
+        max_price: x.MAX_PREIS,
+        avg_price: x.AVG_PREIS,
     })
     .collect()
 }
