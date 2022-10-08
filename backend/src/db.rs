@@ -6,14 +6,8 @@ use sqlx::query;
 pub struct Db(sqlx::SqlitePool);
 
 macro_rules! fetch_all {
-    ($query: expr, $db: expr, $field: ident) => {
-        $query
-            .fetch_all($db)
-            .await
-            .unwrap()
-            .into_iter()
-            .map(|x| x.$field)
-            .collect()
+    ($query: expr, $db: expr) => {
+        $query.fetch_all($db).await.unwrap()
     };
 }
 
@@ -33,9 +27,10 @@ and pp.Herkunft = ifnull(?, pp.Herkunft)
 and pp.Zertifikat = ifnull(?, pp.Zertifikat)",
             category,
             category,
+            category,
             category
         ),
-        db,
-        Name
-    )
+        db
+    );
+    .map
 }
