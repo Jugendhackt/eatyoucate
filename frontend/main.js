@@ -17,6 +17,8 @@ function test() {
 
 function requestSearch(searchTerm) {
     console.log(searchTerm);
+    let response = fetch("127.0.0.1:8000");
+    console.log(response);
 }
 
 function init() {
