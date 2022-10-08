@@ -41,3 +41,6 @@ fn hello() -> &'static str {
 fn rocket() -> _ {
     rocket::build().mount("/", routes![hello, list_products])
 }
+
+#[rocket::main]
+async fn main() {}
