@@ -35,4 +35,6 @@ walker = walk("Bilder")
 for root, dirs, files in walker:
     for file in files:
         print(f"\nImage: {file}")
-        insertBLOB(file[:-3], f"{root}/{file}")
+        print(file[:-4])
+        print(f"{root}/{file}")
+        insertBLOB(file[:-4], f"{root}/{file}")
