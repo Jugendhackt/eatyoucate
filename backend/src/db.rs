@@ -19,7 +19,6 @@ pub async fn get_products_from_category(
     category: Option<&str>,
     certificate: Option<&str>,
     origin: Option<&str>,
-    sort_by: Option<&str>,
 ) -> Vec<Product> {
     fetch_all!(
         query!(
@@ -40,12 +39,11 @@ and PPR_PRD_ID = PRD_ID
 and PRD_NAME like ifnull(?, PRD_NAME)
 and PPR_HERKUNFT = ifnull(?, PPR_HERKUNFT)
 and (PPR_ZERTIFIKAT = ifnull(?, PPR_ZERTIFIKAT) or PPR_ZERTIFIKAT is NULL)
-GROUP BY ifnull(?,PRD_NAME)",
+GROUP BY PRD_NAME",
             category,
             search,
             origin,
             certificate,
-            sort_by
         ),
         db
     )
