@@ -1,5 +1,6 @@
 let recentSearch = '';
 let buttons
+let jsonlist;
 
 console.log('start');
 function test() {
@@ -92,31 +93,58 @@ function createCard(textObj, position) {
   return card;
 }
 
-function createInfoTable(infos){
+function createInfoTable(infos, index){
+  const table = document.createElement("table");
+  table.setAttribute("class", "table");
+  table.setAttribute("id", "table"+index);
+  const tableBody = document.createElement("tbody");
+  let tableRows = [];
+  console.log(infos.length);
+  for (let i = 0; i < infos.length; i++){
+    const tableRow = document.createElement("tr");
+    console.log(infos[0]);
 
+    const paragraph1 = document.createElement("td");
+    paragraph1.innerText = infos[0].name;
+    tableRow.appendChild(paragraph1);
+    const paragraph2 = document.createElement("td");
+    paragraph2.innerText = infos[0].price;
+    tableRow.appendChild(paragraph2);
+    const paragraph3 = document.createElement("td");
+    paragraph3.innerText = infos[0].origin;
+    tableRow.appendChild(paragraph3);
+
+    tableRows.push(tableRow);
+    tableBody.appendChild(tableRow);
+    table.appendChild(tableBody);
+  }
+  table.appendChild(tableBody);
+  return table;
 }
 
 function toggleCardExpansion(buttonid) {
   let index = buttonid.replace("button", "");
   let card = document.getElementById("card"+index);
   if (card.classList.contains("smallCard")){
-    console.log("klein");
     card.setAttribute("class", card.className.replace('smallCard', 'bigCard'));
-    const additionalInfoContainer = document.createElement("div");
+    /*const additionalInfoContainer = document.createElement("div");
     additionalInfoContainer.setAttribute("class", "card-body");
     additionalInfoContainer.setAttribute("id", "addConf" + index);
-    additionalInfoContainer.innerText = "asdasd";
+    additionalInfoContainer.innerText = "asdasd";*/
+    additionalInfoContainer = document.createElement("div");
+    additionalInfoContainer.setAttribute("class", "");
+    additionalInfoContainer.appendChild(createInfoTable(jsonlist.products, index));
     card.appendChild(additionalInfoContainer);
   }
   else{
-    console.log("groß");
     card.setAttribute("class", card.className.replace('bigCard', 'smallCard'));
-    card.removeChild(document.getElementById("addConf" + index));
+    card.removeChild(document.getElementById("table" + index));
   }
 }
 
 
 function processResponse(response) {
+  jsonlist = response;
   console.log(response);
   console.log(response.products[0]);
   //gridBuilder(response.products);
@@ -126,8 +154,8 @@ function processResponse(response) {
 
 function requestSearch(searchTerm) {
   console.log(searchTerm);
-  //const url = 'http://127.0.0.1:8000/products?%a%';
-  const url = "test.json";
+  const url = 'http://127.0.0.1:8000/products?%a%';
+  //const url = "test.json";
   fetch(url)
         .then((response) => response.json())
         .then((data) => processResponse(data));
