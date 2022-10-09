@@ -1,5 +1,5 @@
 import sqlite3
-from os import walk
+from glob import glob
 
 
 def convertToBinaryData(filename):
@@ -31,10 +31,6 @@ def insertBLOB(prd_name, prd_picture):
             print("the sqlite connection is closed")
 
 
-walker = walk("Bilder")
-for root, dirs, files in walker:
-    for file in files:
-        print(f"\nImage: {file}")
-        print(file[:-4])
-        print(f"{root}/{file}")
-        insertBLOB(file[:-4], f"{root}/{file}")
+for file in glob("Bilder/**.jpg"):
+    print(f"Image: {file}")
+    insertBLOB(file[7:-4], file)
