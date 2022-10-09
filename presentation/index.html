@@ -17,11 +17,10 @@
 	 <img style="z-index:10;padding:30px;position:absolute;bottom:0;right:0;" height="100" width="100" src="https://raw.githubusercontent.com/Jugendhackt/jugendhackt-logo/gh-pages/jh.svg">
 		<div class="reveal">
 			<div class="slides">
-			<section><pre>press space to start</pre></section>
 		<section data-background="red" data-auto-animate>
 
 		<h1>
-			<span data-id="front">E</span><span id="d">d</span><span style="font-size:0" id="atyo">atyo</span><span data-id="front">ucate</span>
+			<span data-id="front">E</span><span class="atyo">at</span><span id="d" style="font-size:0">d</span><span class="atyo">yo</span><span data-id="front">ucate</span>
 		</h1>
 		<h2>von August, David, Konrad, Mattis, Paul</h2>
 		</section>
@@ -50,10 +49,10 @@
 				// Learn about plugins: https://revealjs.com/plugins/
 				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
 			});
-			function transition(event) {
+			function transition() {
 					console.log("transition")
-					if (event.indexh == 1) {
-						anime.set("#atyo", {
+					if (Reveal.getIndices().h == 0) {
+						anime.set(".atyo", {
 							fontSize:105,
 						})
 						anime.set("#d", {
@@ -63,19 +62,48 @@
 							targets: "#d",
 							fontSize:105,
 							duration:1500,
-							delay:2000,
 							easing:"easeOutQuint",
 						})
 						anime({
-							targets: "#atyo",
+							targets: ".atyo",
 							fontSize:0,
 							duration:1500,
-							delay:2000,
 							easing:"easeOutQuint",
 						})
 					}
 			  }
-			Reveal.on('slidechanged', event => transition(event))
+			function detransition() {
+					console.log("transition")
+					if (Reveal.getIndices().h == 0) {
+						anime.set("#d", {
+							fontSize:105,
+						})
+						anime.set(".atyo", {
+							fontSize:0,
+						})			
+						anime({
+							targets: ".atyo",
+							fontSize:105,
+							duration:1500,
+							easing:"easeOutQuint",
+						})
+						anime({
+							targets: "#d",
+							fontSize:0,
+							duration:1500,
+							easing:"easeOutQuint",
+						})
+					}
+			  }
+			let state = true;
+			Reveal.addKeyBinding(32, () => {
+				if (state) {
+					transition()
+				} else {
+					detransition()
+				}
+				state = !state
+			})
 	</script>
 	</body>
 </html>
