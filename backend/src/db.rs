@@ -37,8 +37,8 @@ KAT_PICTURE,
 AVG(PPR_PREIS) AVG_PREIS
 from Kategorien, Produkte, Produktpreise
 where KAT_NAME = ifnull(?, KAT_NAME)
-and PRD_KAT_ID = KAT_ID
-and PPR_PRD_ID = PRD_ID
+and PRD_KAT_NAME = KAT_NAME
+and PPR_PRD_NAME = PRD_NAME
 and PRD_NAME like ifnull(?, PRD_NAME)
 and PPR_HERKUNFT = ifnull(?, PPR_HERKUNFT)
 and (PPR_ZERTIFIKAT = ifnull(?, PPR_ZERTIFIKAT) or PPR_ZERTIFIKAT is NULL)
@@ -62,8 +62,8 @@ GROUP BY PRD_NAME",
         min_price: x.MIN_PREIS,
         max_price: x.MAX_PREIS,
         avg_price: x.AVG_PREIS,
-        category_picture: encode(x.KAT_PICTURE),
-        picture: encode(x.PRD_PICTUR),
+        category_picture: x.KAT_PICTURE.map(|p| encode(p)),
+        picture: x.PRD_PICTURE.map(|p| encode(p)),
     })
     .collect()
 }
