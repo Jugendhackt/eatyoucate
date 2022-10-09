@@ -1,4 +1,6 @@
 import sqlite3
+from os import walk
+
 
 def convertToBinaryData(filename):
     # Convert digital data to binary format
@@ -8,7 +10,7 @@ def convertToBinaryData(filename):
 
 def insertBLOB(prd_name, prd_picture):
     try:
-        sqliteConnection = sqlite3.connect('eatyoucate/Datenbank/datenbank.db')
+        sqliteConnection = sqlite3.connect('datenbank.db')
         cursor = sqliteConnection.cursor()
         print("Connected to SQLite")
         sqlite_insert_blob_query = """ update Produkte set PRD_PICTURE = ? where PRD_NAME = ? """
@@ -28,8 +30,9 @@ def insertBLOB(prd_name, prd_picture):
             sqliteConnection.close()
             print("the sqlite connection is closed")
 
-insertBLOB("Apfel", "eatyoucate/Datenbank/Bilder/apple.jpg")
-insertBLOB("Banane", "eatyoucate/Datenbank/Bilder/banana.jpg")
-insertBLOB("Pizza", "eatyoucate/Datenbank/Bilder/pizza.jpg")
-insertBLOB("Brezel", "eatyoucate/Datenbank/Bilder/prezel.jpg")
-insertBLOB("Reis", "eatyoucate/Datenbank/Bilder/rice.jpg")
+
+walker = walk("Bilder")
+for root, dirs, files in walker:
+    for file in files:
+        print(f"\nImage: {file}")
+        insertBLOB(file[:-3], f"{root}/{file}")
