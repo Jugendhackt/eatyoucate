@@ -25,7 +25,11 @@ pub struct ProductList {
 #[serde(crate = "rocket::serde")]
 pub struct Product {
     category_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    category_picture: Option<String>,
     name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    picture: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     certificate: Option<String>,
     unit: String,
@@ -41,18 +45,16 @@ pub struct Product {
     avg_price: Option<f32>,
 }
 
-#[get("/products?<search>&<category>&<certificate>&<origin>&<sort_by>")]
+#[get("/products?<search>&<category>&<certificate>&<origin>")]
 async fn list_products(
     mut db_con: Connection<Db>,
     search: Option<&str>,
     category: Option<&str>,
     certificate: Option<&str>,
     origin: Option<&str>,
-    sort_by: Option<&str>,
 ) -> Json<ProductList> {
     let products =
-        db::get_products_from_category(&mut db_con, search, category, certificate, origin, sort_by)
-            .await;
+        db::get_products_from_category(&mut db_con, search, category, certificate, origin).await;
     let (global_min_price, global_max_price, global_avg_price): (
         Option<f32>,
         Option<f32>,
