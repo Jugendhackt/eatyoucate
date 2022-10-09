@@ -15,7 +15,8 @@ def parsegrammage(grammage: str, price=0):
     if "1kg" == grammage:
         return round(price/100)
     if "1 kg" in grammage:
-        return round(float(re.search("\(1 kg = (\d+,\d+) €\)", grammage).group(1).replace(",", "."))/10,2)
+        if m := re.search("\(1 kg = (\d+,\d+) €\)", grammage):
+            return round(float(m.group(1).replace(",", "."))/10,2)
     return price
 
 for product in soup.find_all("div", "search-service-product"):
