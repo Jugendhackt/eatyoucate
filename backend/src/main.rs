@@ -1,3 +1,5 @@
+#![warn(clippy::unwrap_used)]
+
 pub mod db;
 
 use rocket::serde::{json::Json, Serialize};
@@ -51,29 +53,31 @@ async fn list_products(
     let products =
         db::get_products_from_category(&mut db_con, search, category, certificate, origin, sort_by)
             .await;
-    let global_min_price: Option<f32> = {
-        let mut out = None;
-        products.iter().for_each(|p| {
-            (p.price < out.unwrap_or(f32::MAX)).then(|| out = Some(p.price));
-        });
-        out
-    };
-    let global_max_price: Option<f32> = {
-        let mut out = None;
-        products.iter().for_each(|p| {
-            (p.price > out.unwrap_or(f32::MIN)).then(|| out = Some(p.price));
-        });
-        out
-    };
-    let global_avg_price: Option<f32> = {
-        if !products.is_empty() {
+    let (global_min_price, global_max_price, global_avg_price): (
+        Option<f32>,
+        Option<f32>,
+        Option<f32>,
+    ) = {
+        if products.is_empty() {
+            (None, None, None)
+        } else {
+            let mut min: Option<f32> = None;
+            let mut max: Option<f32> = None;
             let mut sum: f64 = 0.0;
             products.iter().for_each(|p| {
+                (p.price > max.unwrap_or(f32::MIN)).then(|| max = Some(p.price));
+                (p.price < min.unwrap_or(f32::MAX)).then(|| min = Some(p.price));
                 sum += p.price as f64;
             });
-            Some((sum / products.len() as f64) as f32)
-        } else {
-            None
+            (
+                min,
+                max,
+                if sum == 0.0 {
+                    None
+                } else {
+                    Some((sum / products.len() as f64) as f32)
+                },
+            )
         }
     };
     Json(ProductList {
@@ -102,5 +106,5 @@ async fn main() {
         }))
         .launch()
         .await
-        .unwrap();
+        .expect("Failed to start Rocket");
 }
