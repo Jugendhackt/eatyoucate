@@ -37,16 +37,18 @@ Notes: Test2
 ![Bootstrap Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Bootstrap_logo.svg/1024px-Bootstrap_logo.svg.png)
 
 ---
-<!-- .slide: data-background="turquoise" -->
+<!--
+<!-- .slide: data-background="turquoise" -- >
 
-# Live-Demo <!-- .element class="r-fit-text" -->
+# Live-Demo <!-- .element class="r-fit-text" -- >
 <iframe src="">
 </iframe>
  
----
+-->
+
 <!-- .slide: data-background="blue" -->
 
-# Screenshot <!-- .element class="r-fit-text" -->
+# Screenshot 
 ![](screenshot.png)
 
 ---
