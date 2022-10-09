@@ -25,7 +25,9 @@ pub struct ProductList {
 #[serde(crate = "rocket::serde")]
 pub struct Product {
     category_name: String,
+    category_picture: String,
     name: String,
+    picture: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     certificate: Option<String>,
     unit: String,

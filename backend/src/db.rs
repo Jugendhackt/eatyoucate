@@ -1,3 +1,4 @@
+use base64::encode;
 use rocket_db_pools::Database;
 use sqlx::query;
 
@@ -31,6 +32,8 @@ PPR_HERKUNFT,
 PPR_ZERTIFIKAT,
 MIN(PPR_PREIS) MIN_PREIS,
 MAX(PPR_PREIS) MAX_PREIS,
+PRD_PICTURE,
+KAT_PICTURE,
 AVG(PPR_PREIS) AVG_PREIS
 from Kategorien, Produkte, Produktpreise
 where KAT_NAME = ifnull(?, KAT_NAME)
@@ -59,6 +62,8 @@ GROUP BY PRD_NAME",
         min_price: x.MIN_PREIS,
         max_price: x.MAX_PREIS,
         avg_price: x.AVG_PREIS,
+        category_picture: encode(x.KAT_PICTURE),
+        picture: encode(x.PRD_PICTUR),
     })
     .collect()
 }
