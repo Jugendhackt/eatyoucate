@@ -1,5 +1,5 @@
 #!/bin/bash
-for row in $(python scraper/rewe.py scraper/rewe-obst-gemuese-1.html | jq -r '.[] | @base64'); do
+for row in $(python scraper/rewe.py 'scraper/rewe-obst-gemuese-seite2.html' | jq -r '.[] | @base64'); do
 	_jq() {
 		echo ${row} | base64 --decode | jq -r ${1}
 	}
@@ -13,7 +13,6 @@ for row in $(python scraper/rewe.py scraper/rewe-obst-gemuese-1.html | jq -r '.[
 		echo "insert or ignore into Kategorien (KAT_NAME) values ('$KATEGORIE');" | sqlite3 Datenbank/datenbank.db
 		echo "insert into Produkte (PRD_NAME, PRD_KAT_NAME) values ('$CHOSEN', '$KATEGORIE');" | sqlite3 Datenbank/datenbank.db
 	fi
-	echo $CHOSEN;
 	PRICE=$(_jq '.grammage')
 
 	HERKUNFT=$(echo "konventionell")
