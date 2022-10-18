@@ -10,7 +10,7 @@ pub struct Db(sqlx::SqlitePool);
 
 macro_rules! fetch_all {
     ($query: expr, $db: expr) => {
-        $query.fetch_all($db).await.unwrap()
+        $query.fetch_all($db).await.expect("Sql query failed")
     };
 }
 
@@ -62,8 +62,8 @@ GROUP BY PRD_NAME",
         min_price: x.MIN_PREIS,
         max_price: x.MAX_PREIS,
         avg_price: x.AVG_PREIS,
-        category_picture: x.KAT_PICTURE.map(|p| encode(p)),
-        picture: x.PRD_PICTURE.map(|p| encode(p)),
+        category_picture: x.KAT_PICTURE.map(encode),
+        picture: x.PRD_PICTURE.map(encode),
     })
     .collect()
 }
